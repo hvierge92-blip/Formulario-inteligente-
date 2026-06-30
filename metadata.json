@@ -1,0 +1,6 @@
+{
+  "name": "Generador de Contenido RRSS",
+  "description": "Herramienta inteligente para redactar posts atractivos de LinkedIn, Instagram y X. Ofrece ganchos magnéticos, vistas previas simuladas, selección de tonos y variantes duales.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
