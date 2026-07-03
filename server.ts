@@ -26,7 +26,7 @@ app.use(express.json());
 // API generate endpoint
 app.post("/api/generate", async (req, res) => {
   try {
-    const { topic, platform, tone, includeEmojis, includeHashtags } = req.body;
+    const { topic, platform, tone, length = "medio", includeEmojis, includeHashtags } = req.body;
 
     if (!topic) {
       return res.status(400).json({ error: "Por favor, introduce una idea o tema para el post." });
@@ -38,23 +38,41 @@ app.post("/api/generate", async (req, res) => {
       });
     }
 
-    // Prepare system instructions and constraints based on platform
+    // Prepare system instructions and constraints based on platform and length
     let platformConstraints = "";
     if (platform === "linkedin") {
+      let lenConstraint = "Entre 800 y 1200 caracteres.";
+      if (length === "corto") {
+        lenConstraint = "Corto y al grano. Entre 300 y 600 caracteres.";
+      } else if (length === "largo") {
+        lenConstraint = "Detallado y profundo. Entre 1200 y 1800 caracteres.";
+      }
       platformConstraints = `
-- Longitud: Entre 800 y 1300 caracteres.
+- Longitud: ${lenConstraint}
 - Hook obligatorio: El post DEBE comenzar con una primera línea (gancho o hook) extremadamente atractiva que incite a seguir leyendo ('ver más').
 - Formato: Estructurado con espacio en blanco abundante, listas con viñetas elegantes si procede, fácil de leer en móvil.
 `;
     } else if (platform === "instagram") {
+      let lenConstraint = "Entre 180 y 250 caracteres (sin contar hashtags si están incluidos).";
+      if (length === "corto") {
+        lenConstraint = "Muy breve y directo. Entre 100 y 150 caracteres (sin contar hashtags si están incluidos).";
+      } else if (length === "largo") {
+        lenConstraint = "Extenso y descriptivo. Entre 250 y 450 caracteres (sin contar hashtags si están incluidos).";
+      }
       platformConstraints = `
-- Longitud: Entre 150 y 300 caracteres (sin contar hashtags si están incluidos).
+- Longitud: ${lenConstraint}
 - Estilo: Visual, directo, cercano, con un fuerte llamado a la acción (CTA) al final.
 `;
     } else {
       // X / Twitter
+      let lenConstraint = "Estrictamente MÁXIMO 240 caracteres totales. Sé conciso e impactante.";
+      if (length === "corto") {
+        lenConstraint = "Súper breve, máximo 140 caracteres totales. Directo al grano.";
+      } else if (length === "largo") {
+        lenConstraint = "Estrictamente MÁXIMO 280 caracteres totales (límite absoluto de la plataforma). Exprime el espacio disponible al máximo sin pasarte.";
+      }
       platformConstraints = `
-- Longitud: Estrictamente MÁXIMO 280 caracteres totales. Si se sobrepasa este límite, fallará. Sé conciso e impactante.
+- Longitud: ${lenConstraint}
 `;
     }
 

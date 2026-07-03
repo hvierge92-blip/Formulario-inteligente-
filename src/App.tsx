@@ -20,7 +20,7 @@ import {
   ChevronUp,
   MessageSquare
 } from "lucide-react";
-import { Platform, Tone, UserProfile, GeneratedPost, PLATFORMS, TONES, PRESET_AVATARS } from "./types";
+import { Platform, Tone, PostLength, UserProfile, GeneratedPost, PLATFORMS, TONES, LENGTHS, PRESET_AVATARS } from "./types";
 import LinkedInPreview from "./components/LinkedInPreview";
 import InstagramPreview from "./components/InstagramPreview";
 import TwitterPreview from "./components/TwitterPreview";
@@ -42,6 +42,7 @@ export default function App() {
   const [topic, setTopic] = useState("");
   const [platform, setPlatform] = useState<Platform>("linkedin");
   const [tone, setTone] = useState<Tone>("profesional");
+  const [length, setLength] = useState<PostLength>("medio");
   const [includeEmojis, setIncludeEmojis] = useState(true);
   const [includeHashtags, setIncludeHashtags] = useState(true);
   
@@ -147,6 +148,7 @@ export default function App() {
           topic: topic.trim(),
           platform,
           tone,
+          length,
           includeEmojis,
           includeHashtags,
         }),
@@ -167,6 +169,7 @@ export default function App() {
         topic: topic.trim(),
         platform,
         tone,
+        length,
         includeEmojis,
         includeHashtags,
         variant1: data.variants[0],
@@ -211,6 +214,11 @@ export default function App() {
     setTopic(record.topic);
     setPlatform(record.platform);
     setTone(record.tone);
+    if (record.length) {
+      setLength(record.length);
+    } else {
+      setLength("medio");
+    }
     setIncludeEmojis(record.includeEmojis);
     setIncludeHashtags(record.includeHashtags);
     setVariant1(record.variant1);
@@ -469,6 +477,31 @@ export default function App() {
                         title={t.desc}
                       >
                         {t.emoji} {t.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Selector de Longitud */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-slate-400 uppercase tracking-wider block">Longitud del Post</label>
+                <div className="flex flex-wrap gap-2">
+                  {LENGTHS.map((len) => {
+                    const isSelected = length === len.id;
+                    return (
+                      <button
+                        key={len.id}
+                        type="button"
+                        onClick={() => setLength(len.id)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-indigo-600 text-white"
+                            : "bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-600"
+                        }`}
+                        title={len.desc}
+                      >
+                        {len.emoji} {len.name}
                       </button>
                     );
                   })}
